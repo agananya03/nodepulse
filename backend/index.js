@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const generatePrometheusConfig = require('./generatePrometheusConfig');
 
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
@@ -13,6 +14,8 @@ app.post('/nodes', async (req, res) => {
     try {
         const { hostname, ipAddress } = req.body;
         const node = await prisma.node.create({ data: { hostname, ipAddress } });
+        await generatePrometheusConfig(prisma);
+        await fetch('http://prometheus:9090/-/reload', { method: 'POST' });
         res.status(201).json(node);
     } catch (err) {
         res.status(400).json({ error: err.message });
