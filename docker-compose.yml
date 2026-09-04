@@ -41,5 +41,14 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--web.enable-lifecycle'
+  grafana:
+    image: grafana/grafana:latest
+    container_name: fleet-grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
 volumes:
   pgdata:
+  grafana-data:
